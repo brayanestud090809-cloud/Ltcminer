@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoRig Tycoon</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      text-align: center;
+      margin: 0;
+      padding: 15px;
+      user-select: none;
+    }
+    .user-card {
+      background: #1e293b;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #38bdf8;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+    .balance-container {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 16px;
+      border: 1px solid #334155;
+      margin-bottom: 20px;
+    }
+    .ltc-symbol { font-size: 12px; color: #94a3b8; }
+    .balance-value { font-size: 28px; font-weight: bold; color: #f1f5f9; margin: 5px 0; }
+    .hashrate { font-size: 12px; color: #22c55e; font-weight: 600; }
+    .mine-btn { font-size: 80px; cursor: pointer; margin: 15px 0; display: inline-block; }
+    .mine-btn:active { transform: scale(0.88); }
+    .upgrades { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; }
+    .upgrade-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px; border-radius: 10px; margin-top: 10px; }
+    .upgrade-btn { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="user-card" id="user-info">Cargando minero...</div>
+
+  <div class="balance-container">
+    <div class="ltc-symbol">SALDO LITECOIN</div>
+    <div class="balance-value"><span id="ltc-balance">0.00000000</span> LTC</div>
+    <div class="hashrate">⚡ Hashrate: <span id="hashrate-val">0</span> MH/s</div>
+  </div>
+
+  <div class="mine-btn" onclick="mineLTC()">⛏️</div>
+
+  <div class="upgrades">
+    <h3 style="margin:0; font-size:15px;">🛒 Tienda de Rigs</h3>
+    <div class="upgrade-item">
+      <div>
+        <strong>Tarjeta GPU RTX</strong><br>
+        <small>+5 MH/s (+500 Litoshis/s)</small><br>
+        <small style="color:#38bdf8;">0.00005000 LTC</small>
+      </div>
+      <button class="upgrade-btn" onclick="buyUpgrade(5000, 5, 500)">Comprar</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      document.getElementById('user-info').innerText = `Minero: ${tg.initDataUnsafe.user.first_name}`;
+    }
+
+    let litoshis = 0;
+    let hashrate = 0;
+    let passiveIncome = 0;
+
+    function updateDisplay() {
+      let ltc = (litoshis / 100000000).toFixed(8);
+      document.getElementById('ltc-balance').innerText = ltc;
+      document.getElementById('hashrate-val').innerText = hashrate;
+    }
+
+    function mineLTC() {
+      litoshis += 100;
+      updateDisplay();
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    }
+
+    function buyUpgrade(cost, addHash, addPassive) {
+      if (litoshis >= cost) {
+        litoshis -= cost;
+        hashrate += addHash;
+        passiveIncome += addPassive;
+        updateDisplay();
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      } else {
+        alert("¡No tienes suficientes Litoshis!");
+      }
+    }
+
+    setInterval(() => {
+      if (passiveIncome > 0) {
+        litoshis += passiveIncome;
+        updateDisplay();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
