@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,7 +24,7 @@
       font-size: 13px;
       color: #38bdf8;
       display: inline-block;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
     .balance-container {
       background: #1e293b;
@@ -40,7 +41,7 @@
       display: flex;
       justify-content: space-around;
       background: #1e293b;
-      padding: 8px;
+      padding: 6px;
       border-radius: 12px;
       margin-bottom: 15px;
     }
@@ -49,9 +50,9 @@
       border: none;
       color: #94a3b8;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 12px;
       cursor: pointer;
-      padding: 6px 12px;
+      padding: 6px 8px;
       border-radius: 8px;
     }
     .nav-tab.active {
@@ -62,7 +63,7 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    .mine-btn { font-size: 80px; cursor: pointer; margin: 20px 0; display: inline-block; transition: transform 0.1s; }
+    .mine-btn { font-size: 80px; cursor: pointer; margin: 15px 0; display: inline-block; transition: transform 0.1s; }
     .mine-btn:active { transform: scale(0.85); }
 
     .card-box { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; margin-bottom: 10px; }
@@ -99,17 +100,20 @@
     <button class="nav-tab active" onclick="switchTab('mine')">⛏️ Minar</button>
     <button class="nav-tab" onclick="switchTab('shop')">🛒 Tienda</button>
     <button class="nav-tab" onclick="switchTab('tasks')">📋 Misiones</button>
+    <button class="nav-tab" onclick="switchTab('wallet')">💼 Wallet</button>
   </div>
 
+  <!-- Pestaña 1: Minar -->
   <div id="tab-mine" class="tab-content active">
     <div class="mine-btn" id="clicker" onclick="mineLTC(event)">⛏️</div>
     <div class="card-box">
-      <h3 style="margin:0 0 10px 0; font-size:15px; color:#38bdf8;">🎁 Recompensa Diaria</h3>
-      <p style="margin:0 0 10px 0; font-size:12px; color:#94a3b8;">Reclama bono gratis cada 24 horas.</p>
-      <button id="daily-btn" class="action-btn" style="width:100%;" onclick="claimDaily()">Reclamar 1,000 Litoshis</button>
+      <h3 style="margin:0 0 5px 0; font-size:15px; color:#38bdf8;">🔥 Racha & Bono Diario</h3>
+      <p style="margin:0 0 10px 0; font-size:12px; color:#94a3b8;">Racha actual: <span id="streak-val" style="color:#22c55e; font-weight:bold;">0</span> días</p>
+      <button id="daily-btn" class="action-btn" style="width:100%;" onclick="claimDaily()">Reclamar Bono Diario</button>
     </div>
   </div>
 
+  <!-- Pestaña 2: Tienda -->
   <div id="tab-shop" class="tab-content">
     <div class="card-box">
       <h3 style="margin:0; font-size:15px; color:#38bdf8;">🛒 Tienda de Minería</h3>
@@ -140,6 +144,7 @@
     </div>
   </div>
 
+  <!-- Pestaña 3: Misiones -->
   <div id="tab-tasks" class="tab-content">
     <div class="card-box">
       <h3 style="margin:0; font-size:15px; color:#38bdf8;">📋 Tareas Disponibles</h3>
@@ -160,6 +165,15 @@
     </div>
   </div>
 
+  <!-- Pestaña 4: Wallet -->
+  <div id="tab-wallet" class="tab-content">
+    <div class="card-box" style="text-align: center;">
+      <h3 style="margin:0 0 10px 0; font-size:15px; color:#38bdf8;">💼 Billetera TON</h3>
+      <p id="wallet-status" style="font-size:13px; color:#94a3b8; word-break: break-all;">No hay ninguna wallet conectada.</p>
+      <button id="wallet-btn" class="action-btn" style="margin-top:10px; width:100%;" onclick="connectWallet()">Conectar Wallet</button>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
@@ -170,22 +184,26 @@
       document.getElementById('user-info').innerText = `Minero Demo`;
     }
 
-    let litoshis = parseInt(localStorage.getItem('ltc_litoshis')) || 0;
-    let hashrate = parseInt(localStorage.getItem('ltc_hashrate')) || 0;
-    let passiveIncome = parseInt(localStorage.getItem('ltc_passive')) || 0;
+    let litoshis = parseInt(localStorage.getItem('ltc_litoshis_v2')) || 0;
+    let hashrate = parseInt(localStorage.getItem('ltc_hashrate_v2')) || 0;
+    let passiveIncome = parseInt(localStorage.getItem('ltc_passive_v2')) || 0;
+    let streak = parseInt(localStorage.getItem('ltc_streak')) || 0;
     
-    let task1Done = localStorage.getItem('task_1') === 'true';
-    let task2Done = localStorage.getItem('task_2') === 'true';
+    let task1Done = localStorage.getItem('task_1_v2') === 'true';
+    let task2Done = localStorage.getItem('task_2_v2') === 'true';
 
     if (task1Done) markTaskCompletedUI(1);
     if (task2Done) markTaskCompletedUI(2);
 
+    document.getElementById('streak-val').innerText = streak;
     checkDailyStatus();
+    updateWalletUI();
 
     function saveProgress() {
-      localStorage.setItem('ltc_litoshis', litoshis);
-      localStorage.setItem('ltc_hashrate', hashrate);
-      localStorage.setItem('ltc_passive', passiveIncome);
+      localStorage.setItem('ltc_litoshis_v2', litoshis);
+      localStorage.setItem('ltc_hashrate_v2', hashrate);
+      localStorage.setItem('ltc_passive_v2', passiveIncome);
+      localStorage.setItem('ltc_streak', streak);
     }
 
     function updateDisplay() {
@@ -202,13 +220,31 @@
       event.target.classList.add('active');
     }
 
+    // Efecto de sonido sintetizado por Web Audio API
+    function playClickSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch(e) {}
+    }
+
     function mineLTC(event) {
-      litoshis += 10; // Reducido a 10 por clic
+      litoshis += 10;
       updateDisplay();
       saveProgress();
-      
+      playClickSound();
       showFloatingText(event, '+10');
-
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     }
 
@@ -242,20 +278,34 @@
     }
 
     function checkDailyStatus() {
-      const lastClaim = localStorage.getItem('ltc_last_daily');
+      const lastClaim = parseInt(localStorage.getItem('ltc_last_daily')) || 0;
       const now = new Date().getTime();
-      if (lastClaim && now - lastClaim < 86400000) {
-        const btn = document.getElementById('daily-btn');
-        btn.innerText = "Reclamado (Vuelve mañana)";
-        btn.disabled = true;
-        btn.classList.add('claimed-btn');
+      if (lastClaim) {
+        const diff = now - lastClaim;
+        if (diff < 86400000) {
+          const btn = document.getElementById('daily-btn');
+          btn.innerText = "Reclamado (Vuelve mañana)";
+          btn.disabled = true;
+          btn.classList.add('claimed-btn');
+        } else if (diff > 172800000) {
+          // Si pasaron más de 48 horas, se pierde la racha
+          streak = 0;
+          document.getElementById('streak-val').innerText = streak;
+          localStorage.setItem('ltc_streak', streak);
+        }
       }
     }
 
     function claimDaily() {
       const now = new Date().getTime();
+      streak += 1;
       localStorage.setItem('ltc_last_daily', now);
-      litoshis += 1000; // Bono diario reducido a 1000
+      localStorage.setItem('ltc_streak', streak);
+      
+      let reward = 1000 + (streak * 200); // Bono base + extra por racha
+      litoshis += reward;
+      
+      document.getElementById('streak-val').innerText = streak;
       updateDisplay();
       saveProgress();
       
@@ -270,11 +320,11 @@
     function completeTask(id, reward) {
       if (id === 1 && !task1Done) {
         task1Done = true;
-        localStorage.setItem('task_1', 'true');
+        localStorage.setItem('task_1_v2', 'true');
         markTaskCompletedUI(1);
       } else if (id === 2 && !task2Done) {
         task2Done = true;
-        localStorage.setItem('task_2', 'true');
+        localStorage.setItem('task_2_v2', 'true');
         markTaskCompletedUI(2);
       }
       litoshis += reward;
@@ -290,6 +340,38 @@
       btn.classList.add('claimed-btn');
     }
 
+    function connectWallet() {
+      const fakeWallet = "UQDa92xL7...b8Fz4_TONWallet";
+      localStorage.setItem('ltc_wallet_addr', fakeWallet);
+      updateWalletUI();
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function updateWalletUI() {
+      const savedWallet = localStorage.getItem('ltc_wallet_addr');
+      const statusEl = document.getElementById('wallet-status');
+      const btnEl = document.getElementById('wallet-btn');
+      if (savedWallet) {
+        statusEl.innerText = "Conectada: " + savedWallet;
+        statusEl.style.color = "#22c55e";
+        btnEl.innerText = "Desconectar";
+        btnEl.style.background = "#ef4444";
+        btnEl.onclick = disconnectWallet;
+      } else {
+        statusEl.innerText = "No hay ninguna wallet conectada.";
+        statusEl.style.color = "#94a3b8";
+        btnEl.innerText = "Conectar Wallet";
+        btnEl.style.background = "#0284c7";
+        btnEl.onclick = connectWallet;
+      }
+    }
+
+    function disconnectWallet() {
+      localStorage.removeItem('ltc_wallet_addr');
+      updateWalletUI();
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+    }
+
     setInterval(() => {
       if (passiveIncome > 0) {
         litoshis += passiveIncome;
@@ -302,5 +384,4 @@
   </script>
 </body>
 </html>
-
 
