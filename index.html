@@ -15,6 +15,7 @@
       margin: 0;
       padding: 15px;
       user-select: none;
+      position: relative;
     }
     .user-card {
       background: #1e293b;
@@ -30,17 +31,61 @@
       padding: 15px;
       border-radius: 16px;
       border: 1px solid #334155;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     .ltc-symbol { font-size: 12px; color: #94a3b8; }
     .balance-value { font-size: 28px; font-weight: bold; color: #f1f5f9; margin: 5px 0; }
     .hashrate { font-size: 12px; color: #22c55e; font-weight: 600; }
-    .mine-btn { font-size: 80px; cursor: pointer; margin: 15px 0; display: inline-block; transition: transform 0.1s; }
+    
+    /* Pestañas de navegación */
+    .nav-tabs {
+      display: flex;
+      justify-content: space-around;
+      background: #1e293b;
+      padding: 8px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .nav-tab {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+    .nav-tab.active {
+      background: #0284c7;
+      color: white;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .mine-btn { font-size: 80px; cursor: pointer; margin: 20px 0; display: inline-block; transition: transform 0.1s; }
     .mine-btn:active { transform: scale(0.85); }
-    .upgrades { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; max-height: 250px; overflow-y: auto; }
-    .upgrade-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px; border-radius: 10px; margin-top: 10px; }
-    .upgrade-btn { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    .upgrade-btn:active { transform: scale(0.95); }
+
+    .card-box { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; margin-bottom: 10px; }
+    .upgrade-item, .task-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px; border-radius: 10px; margin-top: 10px; }
+    .action-btn { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .action-btn:disabled { background: #475569; opacity: 0.6; cursor: not-allowed; }
+    .claimed-btn { background: #22c55e !important; }
+
+    /* Animación del texto flotante */
+    .floating-text {
+      position: absolute;
+      color: #38bdf8;
+      font-weight: bold;
+      font-size: 20px;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+    }
   </style>
 </head>
 <body>
@@ -53,33 +98,68 @@
     <div class="hashrate">⚡ Hashrate: <span id="hashrate-val">0</span> MH/s</div>
   </div>
 
-  <div class="mine-btn" onclick="mineLTC()">⛏️</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('mine')">⛏️ Minar</button>
+    <button class="nav-tab" onclick="switchTab('shop')">🛒 Tienda</button>
+    <button class="nav-tab" onclick="switchTab('tasks')">📋 Misiones</button>
+  </div>
 
-  <div class="upgrades">
-    <h3 style="margin:0; font-size:15px; color:#38bdf8;">🛒 Tienda de Minería</h3>
-    
-    <div class="upgrade-item">
-      <div>
-        <strong>Tarjeta GPU RTX</strong><br><small>+5 MH/s (+500/s)</small><br>
-        <small style="color:#38bdf8;">0.00005000 LTC</small>
-      </div>
-      <button class="upgrade-btn" onclick="buyUpgrade(5000, 5, 500)">Comprar</button>
+  <div id="tab-mine" class="tab-content active">
+    <div class="mine-btn" id="clicker" onclick="mineLTC(event)">⛏️</div>
+    <div class="card-box">
+      <h3 style="margin:0 0 10px 0; font-size:15px; color:#38bdf8;">🎁 Recompensa Diaria</h3>
+      <p style="margin:0 0 10px 0; font-size:12px; color:#94a3b8;">Reclama bono gratis cada 24 horas.</p>
+      <button id="daily-btn" class="action-btn" style="width:100%;" onclick="claimDaily()">Reclamar 10,000 Litoshis</button>
     </div>
+  </div>
 
-    <div class="upgrade-item">
-      <div>
-        <strong>Minero ASIC Pro</strong><br><small>+25 MH/s (+2,500/s)</small><br>
-        <small style="color:#38bdf8;">0.00050000 LTC</small>
+  <div id="tab-shop" class="tab-content">
+    <div class="card-box">
+      <h3 style="margin:0; font-size:15px; color:#38bdf8;">🛒 Tienda de Minería</h3>
+      
+      <div class="upgrade-item">
+        <div>
+          <strong>Tarjeta GPU RTX</strong><br><small>+5 MH/s (+500/s)</small><br>
+          <small style="color:#38bdf8;">0.00005000 LTC</small>
+        </div>
+        <button class="action-btn" onclick="buyUpgrade(5000, 5, 500)">Comprar</button>
       </div>
-      <button class="upgrade-btn" onclick="buyUpgrade(50000, 25, 2500)">Comprar</button>
+
+      <div class="upgrade-item">
+        <div>
+          <strong>Minero ASIC Pro</strong><br><small>+25 MH/s (+2,500/s)</small><br>
+          <small style="color:#38bdf8;">0.00050000 LTC</small>
+        </div>
+        <button class="action-btn" onclick="buyUpgrade(50000, 25, 2500)">Comprar</button>
+      </div>
+
+      <div class="upgrade-item">
+        <div>
+          <strong>Granja Cuántica</strong><br><small>+150 MH/s (+15,000/s)</small><br>
+          <small style="color:#38bdf8;">0.00500000 LTC</small>
+        </div>
+        <button class="action-btn" onclick="buyUpgrade(500000, 150, 15000)">Comprar</button>
+      </div>
     </div>
+  </div>
 
-    <div class="upgrade-item">
-      <div>
-        <strong>Granja Cuántica</strong><br><small>+150 MH/s (+15,000/s)</small><br>
-        <small style="color:#38bdf8;">0.00500000 LTC</small>
+  <div id="tab-tasks" class="tab-content">
+    <div class="card-box">
+      <h3 style="margin:0; font-size:15px; color:#38bdf8;">📋 Tareas Disponibles</h3>
+
+      <div class="task-item">
+        <div>
+          <strong>Unirse al Canal</strong><br><small>+5,000 Litoshis</small>
+        </div>
+        <button id="task-1" class="action-btn" onclick="completeTask(1, 5000)">Completar</button>
       </div>
-      <button class="upgrade-btn" onclick="buyUpgrade(500000, 150, 15000)">Comprar</button>
+
+      <div class="task-item">
+        <div>
+          <strong>Invitar a un Amigo</strong><br><small>+15,000 Litoshis</small>
+        </div>
+        <button id="task-2" class="action-btn" onclick="completeTask(2, 15000)">Completar</button>
+      </div>
     </div>
   </div>
 
@@ -96,6 +176,15 @@
     let litoshis = parseInt(localStorage.getItem('ltc_litoshis')) || 0;
     let hashrate = parseInt(localStorage.getItem('ltc_hashrate')) || 0;
     let passiveIncome = parseInt(localStorage.getItem('ltc_passive')) || 0;
+    
+    // Cargar estado de tareas y recompensa diaria
+    let task1Done = localStorage.getItem('task_1') === 'true';
+    let task2Done = localStorage.getItem('task_2') === 'true';
+
+    if (task1Done) markTaskCompletedUI(1);
+    if (task2Done) markTaskCompletedUI(2);
+
+    checkDailyStatus();
 
     function saveProgress() {
       localStorage.setItem('ltc_litoshis', litoshis);
@@ -109,11 +198,38 @@
       document.getElementById('hashrate-val').innerText = hashrate;
     }
 
-    function mineLTC() {
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function mineLTC(event) {
       litoshis += 100;
       updateDisplay();
       saveProgress();
+      
+      // Efecto visual flotante
+      showFloatingText(event, '+100');
+
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    }
+
+    function showFloatingText(event, text) {
+      const el = document.createElement('div');
+      el.className = 'floating-text';
+      el.innerText = text;
+      
+      const x = event.clientX || (window.innerWidth / 2);
+      const y = event.clientY || (window.innerHeight / 2);
+      
+      el.style.left = (x - 15) + 'px';
+      el.style.top = (y - 30) + 'px';
+      
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 800);
     }
 
     function buyUpgrade(cost, addHash, addPassive) {
@@ -128,6 +244,55 @@
         alert("¡No tienes suficientes Litoshis!");
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
       }
+    }
+
+    function checkDailyStatus() {
+      const lastClaim = localStorage.getItem('ltc_last_daily');
+      const now = new Date().getTime();
+      if (lastClaim && now - lastClaim < 86400000) {
+        const btn = document.getElementById('daily-btn');
+        btn.innerText = "Reclamado (Vuelve mañana)";
+        btn.disabled = true;
+        btn.classList.add('claimed-btn');
+      }
+    }
+
+    function claimDaily() {
+      const now = new Date().getTime();
+      localStorage.setItem('ltc_last_daily', now);
+      litoshis += 10000;
+      updateDisplay();
+      saveProgress();
+      
+      const btn = document.getElementById('daily-btn');
+      btn.innerText = "Reclamado (Vuelve mañana)";
+      btn.disabled = true;
+      btn.classList.add('claimed-btn');
+
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function completeTask(id, reward) {
+      if (id === 1 && !task1Done) {
+        task1Done = true;
+        localStorage.setItem('task_1', 'true');
+        markTaskCompletedUI(1);
+      } else if (id === 2 && !task2Done) {
+        task2Done = true;
+        localStorage.setItem('task_2', 'true');
+        markTaskCompletedUI(2);
+      }
+      litoshis += reward;
+      updateDisplay();
+      saveProgress();
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function markTaskCompletedUI(id) {
+      const btn = document.getElementById('task-' + id);
+      btn.innerText = "¡Completado!";
+      btn.disabled = true;
+      btn.classList.add('claimed-btn');
     }
 
     setInterval(() => {
