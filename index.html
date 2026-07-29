@@ -37,10 +37,10 @@
     .hashrate { font-size: 12px; color: #22c55e; font-weight: 600; }
     .mine-btn { font-size: 80px; cursor: pointer; margin: 15px 0; display: inline-block; transition: transform 0.1s; }
     .mine-btn:active { transform: scale(0.85); }
-    .upgrades { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; }
+    .upgrades { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; max-height: 250px; overflow-y: auto; }
     .upgrade-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px; border-radius: 10px; margin-top: 10px; }
     .upgrade-btn { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    .upgrade-btn:disabled { background: #475569; opacity: 0.6; }
+    .upgrade-btn:active { transform: scale(0.95); }
   </style>
 </head>
 <body>
@@ -56,14 +56,30 @@
   <div class="mine-btn" onclick="mineLTC()">⛏️</div>
 
   <div class="upgrades">
-    <h3 style="margin:0; font-size:15px;">🛒 Tienda de Rigs</h3>
+    <h3 style="margin:0; font-size:15px; color:#38bdf8;">🛒 Tienda de Minería</h3>
+    
     <div class="upgrade-item">
       <div>
-        <strong>Tarjeta GPU RTX</strong><br>
-        <small>+5 MH/s (+500 Litoshis/s)</small><br>
+        <strong>Tarjeta GPU RTX</strong><br><small>+5 MH/s (+500/s)</small><br>
         <small style="color:#38bdf8;">0.00005000 LTC</small>
       </div>
       <button class="upgrade-btn" onclick="buyUpgrade(5000, 5, 500)">Comprar</button>
+    </div>
+
+    <div class="upgrade-item">
+      <div>
+        <strong>Minero ASIC Pro</strong><br><small>+25 MH/s (+2,500/s)</small><br>
+        <small style="color:#38bdf8;">0.00050000 LTC</small>
+      </div>
+      <button class="upgrade-btn" onclick="buyUpgrade(50000, 25, 2500)">Comprar</button>
+    </div>
+
+    <div class="upgrade-item">
+      <div>
+        <strong>Granja Cuántica</strong><br><small>+150 MH/s (+15,000/s)</small><br>
+        <small style="color:#38bdf8;">0.00500000 LTC</small>
+      </div>
+      <button class="upgrade-btn" onclick="buyUpgrade(500000, 150, 15000)">Comprar</button>
     </div>
   </div>
 
@@ -77,7 +93,6 @@
       document.getElementById('user-info').innerText = `Minero Demo`;
     }
 
-    // Cargar progreso guardado o iniciar de cero
     let litoshis = parseInt(localStorage.getItem('ltc_litoshis')) || 0;
     let hashrate = parseInt(localStorage.getItem('ltc_hashrate')) || 0;
     let passiveIncome = parseInt(localStorage.getItem('ltc_passive')) || 0;
@@ -111,10 +126,10 @@
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       } else {
         alert("¡No tienes suficientes Litoshis!");
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
       }
     }
 
-    // Generar ganancias pasivas cada segundo
     setInterval(() => {
       if (passiveIncome > 0) {
         litoshis += passiveIncome;
@@ -123,7 +138,6 @@
       }
     }, 1000);
 
-    // Cargar pantalla inicial
     updateDisplay();
   </script>
 </body>
