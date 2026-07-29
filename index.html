@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,11 +35,12 @@
     .ltc-symbol { font-size: 12px; color: #94a3b8; }
     .balance-value { font-size: 28px; font-weight: bold; color: #f1f5f9; margin: 5px 0; }
     .hashrate { font-size: 12px; color: #22c55e; font-weight: 600; }
-    .mine-btn { font-size: 80px; cursor: pointer; margin: 15px 0; display: inline-block; }
-    .mine-btn:active { transform: scale(0.88); }
+    .mine-btn { font-size: 80px; cursor: pointer; margin: 15px 0; display: inline-block; transition: transform 0.1s; }
+    .mine-btn:active { transform: scale(0.85); }
     .upgrades { background: #1e293b; padding: 15px; border-radius: 16px; text-align: left; }
     .upgrade-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px; border-radius: 10px; margin-top: 10px; }
     .upgrade-btn { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .upgrade-btn:disabled { background: #475569; opacity: 0.6; }
   </style>
 </head>
 <body>
@@ -71,11 +73,20 @@
 
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
       document.getElementById('user-info').innerText = `Minero: ${tg.initDataUnsafe.user.first_name}`;
+    } else {
+      document.getElementById('user-info').innerText = `Minero Demo`;
     }
 
-    let litoshis = 0;
-    let hashrate = 0;
-    let passiveIncome = 0;
+    // Cargar progreso guardado o iniciar de cero
+    let litoshis = parseInt(localStorage.getItem('ltc_litoshis')) || 0;
+    let hashrate = parseInt(localStorage.getItem('ltc_hashrate')) || 0;
+    let passiveIncome = parseInt(localStorage.getItem('ltc_passive')) || 0;
+
+    function saveProgress() {
+      localStorage.setItem('ltc_litoshis', litoshis);
+      localStorage.setItem('ltc_hashrate', hashrate);
+      localStorage.setItem('ltc_passive', passiveIncome);
+    }
 
     function updateDisplay() {
       let ltc = (litoshis / 100000000).toFixed(8);
@@ -86,6 +97,7 @@
     function mineLTC() {
       litoshis += 100;
       updateDisplay();
+      saveProgress();
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     }
 
@@ -95,18 +107,24 @@
         hashrate += addHash;
         passiveIncome += addPassive;
         updateDisplay();
+        saveProgress();
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       } else {
         alert("¡No tienes suficientes Litoshis!");
       }
     }
 
+    // Generar ganancias pasivas cada segundo
     setInterval(() => {
       if (passiveIncome > 0) {
         litoshis += passiveIncome;
         updateDisplay();
+        saveProgress();
       }
     }, 1000);
+
+    // Cargar pantalla inicial
+    updateDisplay();
   </script>
 </body>
 </html>
