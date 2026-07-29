@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -103,7 +102,6 @@
     <button class="nav-tab" onclick="switchTab('wallet')">💼 Wallet</button>
   </div>
 
-  <!-- Pestaña 1: Minar -->
   <div id="tab-mine" class="tab-content active">
     <div class="mine-btn" id="clicker" onclick="mineLTC(event)">⛏️</div>
     <div class="card-box">
@@ -113,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Pestaña 2: Tienda -->
   <div id="tab-shop" class="tab-content">
     <div class="card-box">
       <h3 style="margin:0; font-size:15px; color:#38bdf8;">🛒 Tienda de Minería</h3>
@@ -144,7 +141,6 @@
     </div>
   </div>
 
-  <!-- Pestaña 3: Misiones -->
   <div id="tab-tasks" class="tab-content">
     <div class="card-box">
       <h3 style="margin:0; font-size:15px; color:#38bdf8;">📋 Tareas Disponibles</h3>
@@ -165,7 +161,6 @@
     </div>
   </div>
 
-  <!-- Pestaña 4: Wallet -->
   <div id="tab-wallet" class="tab-content">
     <div class="card-box" style="text-align: center;">
       <h3 style="margin:0 0 10px 0; font-size:15px; color:#38bdf8;">💼 Billetera TON</h3>
@@ -220,7 +215,6 @@
       event.target.classList.add('active');
     }
 
-    // Efecto de sonido sintetizado por Web Audio API
     function playClickSound() {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -288,7 +282,6 @@
           btn.disabled = true;
           btn.classList.add('claimed-btn');
         } else if (diff > 172800000) {
-          // Si pasaron más de 48 horas, se pierde la racha
           streak = 0;
           document.getElementById('streak-val').innerText = streak;
           localStorage.setItem('ltc_streak', streak);
@@ -302,7 +295,7 @@
       localStorage.setItem('ltc_last_daily', now);
       localStorage.setItem('ltc_streak', streak);
       
-      let reward = 1000 + (streak * 200); // Bono base + extra por racha
+      let reward = 1000 + (streak * 200);
       litoshis += reward;
       
       document.getElementById('streak-val').innerText = streak;
@@ -384,4 +377,3 @@
   </script>
 </body>
 </html>
-
