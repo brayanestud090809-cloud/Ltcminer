@@ -1,13 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RichTide - Panel de Ganancias</title>
-    <!-- Script oficial de Telegram Web App -->
+    <title>Richtodie - Panel de Ganancias</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Iconos de FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -41,7 +38,6 @@
             margin: auto;
         }
 
-        /* Notificación flotante superior estilo app real */
         .notification-banner {
             background: white;
             border-radius: 12px;
@@ -52,20 +48,11 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             margin-bottom: 16px;
             border-left: 4px solid var(--success);
-            animation: fadeIn 0.5s ease;
         }
 
-        .notification-content p {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
+        .notification-content p { font-size: 12px; color: var(--text-muted); }
+        .notification-content strong { font-size: 13px; color: var(--text-main); }
 
-        .notification-content strong {
-            font-size: 13px;
-            color: var(--text-main);
-        }
-
-        /* Cabecera */
         .header {
             display: flex;
             justify-content: space-between;
@@ -73,11 +60,7 @@
             margin-bottom: 16px;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
 
         .user-profile {
             width: 40px;
@@ -90,24 +73,16 @@
             justify-content: center;
             font-weight: bold;
             font-size: 16px;
-            box-shadow: 0 2px 6px rgba(88, 86, 214, 0.3);
         }
 
-        .views-section {
-            display: none; /* Controlado por JS para las pestañas */
-        }
-
-        .views-section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
+        .views-section { display: none; }
+        .views-section.active { display: block; animation: fadeIn 0.3s ease; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Tarjetas de Balance y Estadísticas */
         .card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -117,23 +92,9 @@
             border: 1px solid rgba(0,0,0,0.02);
         }
 
-        .balance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .balance-box .label {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .balance-box .amount {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--success);
-            margin-top: 2px;
-        }
+        .balance-header { display: flex; justify-content: space-between; align-items: center; }
+        .balance-box .label { font-size: 13px; color: var(--text-muted); }
+        .balance-box .amount { font-size: 26px; font-weight: 800; color: var(--success); margin-top: 2px; }
 
         .btn-action {
             background: var(--primary-light);
@@ -144,11 +105,6 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-action:active {
-            transform: scale(0.96);
         }
 
         .stats-grid {
@@ -186,7 +142,6 @@
         .stat-info h4 { font-size: 15px; font-weight: 700; color: var(--text-main); }
         .stat-info p { font-size: 11px; color: var(--text-muted); }
 
-        /* Alerta de Pago */
         .alert-box {
             background: #fff5f5;
             border: 1px solid #fed7d7;
@@ -197,12 +152,10 @@
             align-items: flex-start;
             margin-bottom: 16px;
         }
-
         .alert-box i { color: #e53e3e; font-size: 18px; margin-top: 2px; }
         .alert-box h5 { font-size: 13px; color: #c53030; font-weight: 700; }
         .alert-box p { font-size: 11px; color: #e53e3e; margin-top: 2px; line-height: 1.4; }
 
-        /* Enlace de Referidos */
         .referral-box {
             background: #f7fafc;
             border: 1px solid var(--border-color);
@@ -231,11 +184,7 @@
             outline: none;
         }
 
-        .link-row i {
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 14px;
-        }
+        .link-row i { color: var(--primary); cursor: pointer; font-size: 14px; }
 
         .btn-primary {
             background: var(--primary);
@@ -251,7 +200,6 @@
             box-shadow: 0 4px 12px rgba(88, 86, 214, 0.25);
         }
 
-        /* Lista de tareas y vídeos */
         .task-item {
             display: flex;
             justify-content: space-between;
@@ -276,6 +224,7 @@
             font-weight: 600;
             cursor: pointer;
         }
+        .btn-go:disabled { background: #cbd5e0; cursor: not-allowed; }
 
         .video-card {
             background: white;
@@ -285,19 +234,19 @@
             margin-bottom: 14px;
         }
 
-        .video-thumb {
-            width: 100%;
-            height: 160px;
-            background: #000;
+        .video-container {
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
+            width: 100%;
+            height: 180px;
+            background: #000;
         }
 
-        /* Barra de navegación inferior */
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -346,20 +295,18 @@
 <body>
 
     <div class="container">
-        <!-- Notificación emergente superior simulada -->
         <div class="notification-banner" id="notif-banner">
             <div class="notification-content">
-                <p>RichTide • Hace un momento</p>
-                <strong>¡Nuevo pago enviado! @Carlos Andrés</strong>
+                <p>Richtodie • Ahora</p>
+                <strong>¡Bienvenido a tu panel de minería!</strong>
             </div>
             <i class="fa-solid fa-xmark" style="color: #a0aec0; cursor: pointer;" onclick="cerrarNotif()"></i>
         </div>
 
-        <!-- Cabecera común -->
         <header class="header">
             <div class="header-left">
                 <div class="user-profile" id="user-initial">R</div>
-                <h3 style="font-size: 16px; font-weight: 700;">RichTide</h3>
+                <h3 style="font-size: 16px; font-weight: 700;">Richtodie</h3>
             </div>
             <i class="fa-solid fa-globe" style="color: var(--text-muted); font-size: 18px;"></i>
         </header>
@@ -370,7 +317,7 @@
                 <div class="balance-header">
                     <div class="balance-box">
                         <span class="label">Saldo Disponible</span>
-                        <h2 class="amount">$98.000</h2>
+                        <h2 class="amount" id="display-saldo">$98.000</h2>
                     </div>
                     <button class="btn-action" onclick="cambiarVista('dinero')">¿Cómo funciona?</button>
                 </div>
@@ -382,7 +329,7 @@
                     <div class="stat-card">
                         <div class="stat-icon green"><i class="fa-solid fa-wallet"></i></div>
                         <div class="stat-info">
-                            <h4>$98.000</h4>
+                            <h4 id="stat-ganancia">$98.000</h4>
                             <p>Ganancia total</p>
                         </div>
                     </div>
@@ -396,14 +343,14 @@
                     <div class="stat-card">
                         <div class="stat-icon orange"><i class="fa-solid fa-file-lines"></i></div>
                         <div class="stat-info">
-                            <h4>12</h4>
+                            <h4 id="stat-tareas">12</h4>
                             <p>Tareas</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon purple"><i class="fa-solid fa-play"></i></div>
                         <div class="stat-info">
-                            <h4>3</h4>
+                            <h4 id="stat-videos">3</h4>
                             <p>Vídeos</p>
                         </div>
                     </div>
@@ -416,7 +363,7 @@
                 <div class="referral-box">
                     <span style="font-size: 11px; color: var(--text-muted);">Tu enlace personal</span>
                     <div class="link-row">
-                        <input type="text" id="ref-link" value="https://t.me/richtide_bot/app?start=ref_user" readonly>
+                        <input type="text" id="ref-link" value="https://t.me/richtodie_bot/app?start=ref_user" readonly>
                         <i class="fa-regular fa-copy" onclick="copiarEnlace()"></i>
                     </div>
                 </div>
@@ -429,59 +376,52 @@
             <div class="card">
                 <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">Programa de Afiliados</h4>
                 <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">
-                    Gana <strong>$20.000</strong> por cada persona registrada y el <strong>10%</strong> de sus ganancias de por vida.
+                    Gana <strong>$20.000</strong> por cada persona registrada y el <strong>10%</strong> de sus ganancias.
                 </p>
                 <div class="referral-box">
                     <span style="font-size: 11px; color: var(--text-muted);">Enlace de invitación</span>
                     <div class="link-row">
-                        <input type="text" value="https://t.me/richtide_bot/app?start=ref_user" readonly>
+                        <input type="text" value="https://t.me/richtodie_bot/app?start=ref_user" readonly>
                         <i class="fa-regular fa-copy" onclick="copiarEnlace()"></i>
                     </div>
                 </div>
             </div>
-
-            <div class="card" style="background: var(--primary-light); border: 1px solid #d4d3fc;">
-                <h5 style="color: var(--primary); font-size: 13px; font-weight: 700; margin-bottom: 4px;">Centro de Actividad</h5>
-                <p style="font-size: 11px; color: #4a5568; line-height: 1.4;">
-                    Aún no tienes invitados activos. Comparte tu enlace en grupos de Telegram o con amigos para empezar a generar comisiones multinivel.
-                </p>
-            </div>
         </div>
 
-        <!-- ================= VISTA CENTRO (TAREAS) ================= -->
+        <!-- ================= VISTA CENTRO (TAREAS FUNCIONALES) ================= -->
         <div id="view-centro" class="views-section">
             <div class="card" style="background: linear-gradient(135deg, #5856d6, #7c7afe); color: white;">
                 <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Task Center 💎</h3>
-                <p style="font-size: 12px; opacity: 0.9; line-height: 1.4;">Completa las actividades diarias para aumentar tu saldo virtual instantáneamente.</p>
+                <p style="font-size: 12px; opacity: 0.9; line-height: 1.4;">Completa las actividades para sumar recompensas reales a tu saldo.</p>
             </div>
 
             <div class="task-item">
                 <div class="task-info">
                     <h4>Participar en actividades</h4>
-                    <p>Usa la plataforma durante al menos 5 min</p>
+                    <p>Recompensa: +$2.500</p>
                 </div>
-                <button class="btn-go" onclick="completarTarea(this)">Ir</button>
+                <button class="btn-go" onclick="reclamarRecompensa(2500, this)">Completar</button>
             </div>
             <div class="task-item">
                 <div class="task-info">
                     <h4>Experimentar la aplicación</h4>
-                    <p>Juega e interactúa con los módulos</p>
+                    <p>Recompensa: +$3.000</p>
                 </div>
-                <button class="btn-go" onclick="completarTarea(this)">Ir</button>
+                <button class="btn-go" onclick="reclamarRecompensa(3000, this)">Completar</button>
             </div>
             <div class="task-item">
                 <div class="task-info">
                     <h4>Completa la encuesta</h4>
-                    <p>Responde preguntas rápidas</p>
+                    <p>Recompensa: +$1.500</p>
                 </div>
-                <button class="btn-go" onclick="completarTarea(this)">Ir</button>
+                <button class="btn-go" onclick="reclamarRecompensa(1500, this)">Completar</button>
             </div>
             <div class="task-item">
                 <div class="task-info">
                     <h4>Prueba un nuevo juego</h4>
-                    <p>Diversión y recompensas aseguradas</p>
+                    <p>Recompensa: +$5.000</p>
                 </div>
-                <button class="btn-go" onclick="completarTarea(this)">Ir</button>
+                <button class="btn-go" onclick="reclamarRecompensa(5000, this)">Completar</button>
             </div>
         </div>
 
@@ -489,26 +429,32 @@
         <div id="view-video" class="views-section">
             <div class="card">
                 <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">Centro de Vídeos</h4>
-                <p style="font-size: 11px; color: var(--text-muted);">Mira los vídeos promocionales diarios para obtener bonificaciones de saldo.</p>
+                <p style="font-size: 11px; color: var(--text-muted);">Mira los vídeos completos para recibir tu bonificación.</p>
             </div>
 
             <div class="video-card">
-                <div class="video-thumb">
-                    <i class="fa-solid fa-play" style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 50%;"></i>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&mute=1" allowfullscreen></iframe>
                 </div>
-                <div style="padding: 12px;">
-                    <h5 style="font-size: 13px; font-weight: 700;">Vídeo Promocional #1</h5>
-                    <p style="font-size: 11px; color: var(--text-muted);">Duración: 30 segundos</p>
+                <div style="padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h5 style="font-size: 13px; font-weight: 700;">Vídeo Promocional #1</h5>
+                        <p style="font-size: 11px; color: var(--text-muted);">Recompensa: +$2.000</p>
+                    </div>
+                    <button class="btn-go" onclick="reclamarRecompensa(2000, this)">Reclamar</button>
                 </div>
             </div>
 
             <div class="video-card">
-                <div class="video-thumb">
-                    <i class="fa-solid fa-play" style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 50%;"></i>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/3JZ_D3ELwOQ?autoplay=0&mute=1" allowfullscreen></iframe>
                 </div>
-                <div style="padding: 12px;">
-                    <h5 style="font-size: 13px; font-weight: 700;">Vídeo Promocional #2</h5>
-                    <p style="font-size: 11px; color: var(--text-muted);">Duración: 45 segundos</p>
+                <div style="padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h5 style="font-size: 13px; font-weight: 700;">Vídeo Promocional #2</h5>
+                        <p style="font-size: 11px; color: var(--text-muted);">Recompensa: +$2.500</p>
+                    </div>
+                    <button class="btn-go" onclick="reclamarRecompensa(2500, this)">Reclamar</button>
                 </div>
             </div>
         </div>
@@ -519,27 +465,22 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div>
                     <h5>¡Configura tu método de pago!</h5>
-                    <p>No te pierdas tus ganancias. Configura tu cuenta bancaria o billetera para asegurar los pagos a tiempo.</p>
+                    <p>No te pierdas tus ganancias. Configura tu cuenta para asegurar los retiros a tiempo.</p>
                 </div>
             </div>
 
             <div class="card">
                 <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Resumen de Retiro</h4>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px;">
-                    <span style="color: var(--text-muted);">Ganancia total</span>
-                    <strong style="color: var(--text-main);">$98.000</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px;">
                     <span style="color: var(--text-muted);">Saldo disponible</span>
-                    <strong style="color: var(--success);">$98.000</strong>
+                    <strong style="color: var(--success);" id="display-saldo-dinero">$98.000</strong>
                 </div>
-                <button class="btn-primary" onclick="alert('Por favor configura un método de pago válido o contacta al canal de difusión.')">Agregar Método de Pago</button>
+                <button class="btn-primary" onclick="alert('Para retirar, recuerda que se requiere completar el proceso de verificación del 10% en el bot.')">Solicitar Retiro</button>
             </div>
         </div>
 
     </div>
 
-    <!-- Barra de Navegación Inferior -->
     <nav class="bottom-nav">
         <a class="nav-item active" onclick="cambiarVista('inicio', this)">
             <i class="fa-solid fa-house"></i>
@@ -563,7 +504,8 @@
     </nav>
 
     <script>
-        // Inicializar Telegram Web App de forma segura
+        let saldoActual = 98000;
+
         let tg = window.Telegram.WebApp;
         tg.expand();
         
@@ -572,22 +514,13 @@
             document.getElementById('user-initial').innerText = nombre.charAt(0).toUpperCase();
         }
 
-        // Sistema de navegación por pestañas fluido
         function cambiarVista(vistaId, elementoNav) {
-            // Ocultar todas las vistas
             document.querySelectorAll('.views-section').forEach(el => el.classList.remove('active'));
-            // Mostrar la seleccionada
             document.getElementById('view-' + vistaId).classList.add('active');
 
-            // Actualizar estados activos de la barra inferior si viene del menú
             if (elementoNav) {
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 elementoNav.classList.add('active');
-            } else {
-                // Si se llamó mediante un botón interno, sincronizar icono inferior correspondiente
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                // Buscamos el ítem correspondiente según la vista
-                event.stopPropagation();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -597,23 +530,29 @@
         }
 
         function copiarEnlace() {
-            navigator.clipboard.writeText("https://t.me/richtide_bot/app?start=ref_user");
-            alert("¡Enlace copiado al portapapeles con éxito!");
+            navigator.clipboard.writeText("https://t.me/richtodie_bot/app?start=ref_user");
+            alert("¡Enlace copiado al portapapeles!");
         }
 
         function compartirEnlace() {
             if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent("https://t.me/richtide_bot/app?start=ref_user") + "&text=" + encodeURIComponent("¡Únete y gana dinero al instante!"));
+                tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent("https://t.me/richtodie_bot/app?start=ref_user") + "&text=" + encodeURIComponent("¡Únete a Richtodie y gana dinero al instante!"));
             } else {
                 copiarEnlace();
             }
         }
 
-        function completarTarea(btn) {
-            btn.innerText = "Hecho";
-            btn.style.background = "#cbd5e0";
+        function reclamarRecompensa(monto, btn) {
+            saldoActual += monto;
+            
+            let saldoFormateado = "$" + saldoActual.toLocaleString('es-CL');
+            document.getElementById('display-saldo').innerText = saldoFormateado;
+            document.getElementById('stat-ganancia').innerText = saldoFormateado;
+            document.getElementById('display-saldo-dinero').innerText = saldoFormateado;
+
+            btn.innerText = "¡Completado!";
             btn.disabled = true;
-            alert("¡Actividad registrada correctamente! Revisa tu saldo.");
+            alert("¡Recompensa reclamada con éxito! Se ha sumado a tu saldo.");
         }
     </script>
 </body>
